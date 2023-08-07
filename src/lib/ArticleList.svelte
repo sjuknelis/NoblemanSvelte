@@ -19,18 +19,7 @@
     }
 
     const createBlank = async () => {
-        const response = await fetch(`/api/article`,{
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                title: "",
-                author: "",
-                volume: currentVolume,
-                content: []
-            })
-        });
+        const response = await fetch(`/api/article`,{method: "POST"});
         articleID = (await response.json()).id;
         reloadArticles();
     }
@@ -79,13 +68,10 @@
 {/if}
 <br />
 {#if articles}
-    {#each articles as article}
-        <div class="row article" on:click={() => articleID = article.id}>
+    {#each articles as article,index}
+        <div class={`row article ${index == articles.length - 1 ? "bottom-edge" : ""}`} on:click={() => articleID = article.id}>
             <p>
-                <span class="h3">{ article.title || "(untitled)" }</span> by { article.author || "(unknown)" }
-            </p>
-            <p>
-                Published
+                <span class="h4">{ article.title || "(untitled)" }</span> by { article.author || "(unknown)" }
             </p>
         </div>
     {/each}
@@ -96,11 +82,15 @@
 <style>
     .article {
         border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
         cursor: pointer;
+        padding-top: 0.25em;
+        padding-bottom: 0.25em;
     }
     .article * {
         margin-bottom: 0.25em;
+    }
+    .bottom-edge {
+        border-bottom: 1px solid #ccc;
     }
     select.form-control {
         display: inline;

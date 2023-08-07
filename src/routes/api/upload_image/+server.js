@@ -10,5 +10,5 @@ export async function POST({ request }) {
     const ext = extname(file.name);
     const uploadPath = join(UPLOAD_PATH,randomUUID() + ext);
     writeFile(uploadPath,Buffer.from(await file.arrayBuffer()));
-    return json({"url": "/" + uploadPath});
+    return json({"src": "/" + uploadPath});
 }

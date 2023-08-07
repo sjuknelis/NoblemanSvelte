@@ -1,8 +1,8 @@
 import { json } from "@sveltejs/kit";
 import { randomUUID } from "crypto";
 import { unlink, writeFile } from "fs/promises";
-import { zipToDoc } from "../../../lib/zipToDoc";
-import { _createArticle } from "../article/+server";
+import { zipToArticle } from "$lib/zipToArticle";
+import { createArticle } from "$lib/createArticle";
 
 export async function POST({ request }) {
     const formData = await request.formData();
@@ -14,7 +14,7 @@ export async function POST({ request }) {
         const path = `archive-${randomUUID()}.zip`;
 
         await writeFile(path,Buffer.from(await file.arrayBuffer()));
-        articles.push(await zipToDoc(path));
+        articles.push(await zipToArticle(path));
         await unlink(path);
     }
 
@@ -22,9 +22,8 @@ export async function POST({ request }) {
     const ids = [];
     for ( const article of articles ) {
         article.volume = volume;
-        ids.push(await _createArticle(article));
+        ids.push(await createArticle(article));
     }
 
-    console.log(ids);
     return json(ids);
 }

@@ -60,7 +60,7 @@ function htmlToDoc(html) {
     }
 }
 
-async function zipToDoc(path) {
+export async function zipToArticle(path) {
     const zip = new StreamZip.async({
         file: path,
         storeEntries: true
@@ -82,5 +82,3 @@ async function zipToDoc(path) {
 
     return doc;
 }
-
-export { zipToDoc }

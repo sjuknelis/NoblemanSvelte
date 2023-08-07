@@ -1,17 +1,17 @@
 <script>
     import Article from "../lib/Article.svelte";
-import ArticleList from "../lib/ArticleList.svelte";
+    import ArticleList from "../lib/ArticleList.svelte";
 
-    let list,articleID;
+    let articleList,articleID;
 </script>
 
 <div class="row">
     <div class="col-3">
-        <ArticleList bind:this={list} bind:articleID={articleID} />
+        <ArticleList bind:this={articleList} bind:articleID={articleID} />
     </div>
     <div class="col-9">
         {#if articleID}
-            <Article articleID={articleID} on:shouldReloadArticles={() => {list.reloadArticles(); console.log("h")}} />
+            <Article articleID={articleID} on:shouldReloadArticles={articleList.reloadArticles} />
         {/if}
     </div>
 </div>

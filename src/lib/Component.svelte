@@ -34,14 +34,12 @@
 </script>
 
 {#if comp.type != "image"}
-    <div class="row">
-        <span class={`text-input ${comp.type == "quote" ? "quote" : ""}`} role="textbox" contenteditable bind:innerText={comp.data.text}></span>
-    </div>
+    <span class={`text-input ${comp.type == "quote" ? "quote" : ""}`} role="textbox" contenteditable bind:innerText={comp.data.text}></span>
+    <br />
 {:else}
     <div class="container-60">
-        <div class="row">
-            <img src={comp.data.src} on:click={() => fileRef.click()} />
-        </div>
+        <img src={comp.data.src} on:click={() => fileRef.click()} />
+        <br />
         <br />
         <div class="row">
             <div class="col-2">
@@ -61,8 +59,8 @@
             </div>
         </div>
     </div>
-    <br />
 {/if}
+<br />
 <div class="d-flex flex-row justify-content-between">
     <div>
         <span class={`small-link ${comp.type == "paragraph" ? "black" : ""}`} on:click={() => setType("paragraph")}>Paragraph</span>
@@ -70,8 +68,8 @@
         <span class={`small-link ${comp.type == "image" ? "black" : ""}`} on:click={() => setType("image")}>Image</span>
     </div>
     <div>
-        <span class="small-link">Up</span>
-        <span class="small-link">Down</span>
+        <span class="small-link">&#x2191;</span>
+        <span class="small-link">&#x2193;</span>
         <span class="small-link">&times;</span>
     </div>
 </div>
@@ -85,7 +83,7 @@
     }
     .text-input:empty {
         border: 1px solid #ccc;
-        border-radius: 10px;
+        border-radius: 4px;
     }
     .quote {
         font-weight: bold;
@@ -116,6 +114,7 @@
     img {
         padding: 0;
         border-radius: 10px;
+        width: 100%;
     }
     hr {
         margin-bottom: 0;

@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import Component from "./Component.svelte";
 
     export let articleID;
@@ -32,18 +32,16 @@
 </script>
 
 {#if article}
-    <div class="row">
-        <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={() => dispatch("shouldReloadArticles")}></span>
-    </div>
+    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={() => dispatch("shouldReloadArticles")}></span>
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-grow-1">
             By: 
-            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author}></span>
+            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={() => dispatch("shouldReloadArticles")}></span>
         </div>
         <div>
             Volume:
             <select class="form-control">
-                <option>1</option>
+                <option>113/1</option>
             </select>
         </div>
     </div>
@@ -89,6 +87,7 @@
         border-radius: 100%;
         margin-top: 0.5em;
         margin-bottom: 0.5em;
+        background-color: white;
         transition: background-color 0.2s ease;
     }
     .add-button:hover {
