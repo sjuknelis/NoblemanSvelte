@@ -8,11 +8,11 @@ export async function POST({ request }) {
 }
 
 export async function GET({ url }) {
-    return json(readArticle(url.searchParams.get("id")));
+    return json(await readArticle(url.searchParams.get("id")));
 }
 
 export async function PUT({ request }) {
-    await updateArticle(await request.body());
+    await updateArticle(await request.json());
     return json({ok: true});
 }
 

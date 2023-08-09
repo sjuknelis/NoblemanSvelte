@@ -1,5 +1,5 @@
 import { json } from "@sveltejs/kit";
-import { getDB } from "$lib/getDB";
+import { getDB } from "$lib/articleDB";
 
 export async function GET({ url }) {
     const db = await getDB();

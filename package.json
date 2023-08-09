@@ -16,6 +16,7 @@
 	"type": "module",
 	"dependencies": {
 		"cheerio": "^1.0.0-rc.12",
+		"firebase": "^10.1.0",
 		"node-stream-zip": "^1.15.0",
 		"promised-sqlite3": "^2.1.0"
 	}

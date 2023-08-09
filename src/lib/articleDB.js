@@ -3,7 +3,7 @@ import { AsyncDatabase } from "promised-sqlite3";
 const defaultArticle = {
     title: "",
     author: "",
-    volume: currentVolume,
+    volume: "113/1",
     content: []
 };
 
@@ -23,8 +23,8 @@ export async function createArticle(article) {
 export async function readArticle(id) {
     const db = await getDB();
     const row = await db.get(
-        `select title,author,volume,content,isPublished,publishKeys from articles where id=?`,
-        url.searchParams.get("id")
+        `select id,title,author,volume,content,isPublished,publishKeys from articles where id=?`,
+        id
     );
     row.content = JSON.parse(row.content);
     row.publishKeys = JSON.parse(row.publishKeys);
@@ -33,7 +33,6 @@ export async function readArticle(id) {
 
 export async function updateArticle(article) {
     const db = await getDB();
-    const article = await request.json();
     await db.run(
         `update articles set title=?,author=?,volume=?,content=?,isPublished=?,publishKeys=? where id=?`,
         article.title,
@@ -54,7 +53,7 @@ export async function deleteArticle(id) {
     );
 }
 
-const getDB = (() => {
+export const getDB = (() => {
     let db;
 
     return async () => {

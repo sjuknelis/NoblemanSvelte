@@ -1,6 +1,6 @@
 <script>
-    import Article from "../lib/Article.svelte";
-    import ArticleList from "../lib/ArticleList.svelte";
+    import Article from "$lib/components/Article.svelte";
+    import ArticleList from "$lib/components/ArticleList.svelte";
 
     let articleList,articleID;
 </script>

@@ -2,7 +2,7 @@ import { json } from "@sveltejs/kit";
 import { randomUUID } from "crypto";
 import { unlink, writeFile } from "fs/promises";
 import { zipToArticle } from "$lib/zipToArticle";
-import { createArticle } from "$lib/createArticle";
+import { createArticle } from "$lib/articleDB";
 
 export async function POST({ request }) {
     const formData = await request.formData();
