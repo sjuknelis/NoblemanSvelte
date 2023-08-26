@@ -24,3 +24,11 @@ export type PublishKeys = {
     id?: string;
     statIndex?: number;
 }
+
+export type ComponentInteractions = {
+    isFirst: boolean;
+    isLast: boolean;
+    moveUp: () => void;
+    moveDown: () => void;
+    delete: () => void;
+}

@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import Component from "./Component.svelte";
     import { articleID, volumes, currentVolume } from "../stores";
-    import type { Article } from "../types";
+    import type { Article, ArticleComponent, ComponentInteractions } from "../types";
 
     let article: Article;
 
@@ -43,6 +43,27 @@
         article.volume = volume;
         currentVolume.set(volume);
     }
+
+    const getCompInteractions = (comp: ArticleComponent,index: number): ComponentInteractions => {
+        return {
+            isFirst: index == 0,
+            isLast: index == article.content.length - 1,
+            moveUp: () => {
+                article.content.splice(index,1);
+                article.content.splice(index - 1,0,comp);
+                article = article;
+            },
+            moveDown: () => {
+                article.content.splice(index,1);
+                article.content.splice(index + 1,0,comp);
+                article = article;
+            },
+            delete: () => {
+                article.content.splice(index,1);
+                article = article;
+            }
+        }
+    }
 </script>
 
 {#if article}
@@ -69,7 +90,7 @@
             <button class="add-button" on:click={() => addComp(index)}>+</button>
             <div class="flex-grow-1 line"></div>
         </div>
-        <Component bind:comp={comp} />
+        <Component bind:comp={comp} interactions={getCompInteractions(comp,index)} />
     {/each}
     <div class="d-flex">
         <div class="flex-grow-1 line"></div>

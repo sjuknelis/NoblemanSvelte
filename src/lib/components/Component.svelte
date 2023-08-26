@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { ArticleComponent } from "../types";
+    import type { ArticleComponent, ComponentInteractions } from "../types";
 
-    export let comp: ArticleComponent;
+    export let comp: ArticleComponent,interactions: ComponentInteractions;
 
     const setType = (newType: string) => {
         if ( comp.type == newType ) return;
@@ -42,6 +42,9 @@
     <br />
 {:else}
     <div class="container-60">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <!-- svelte-ignore a11y-missing-attribute -->
         <img src={comp.data.src} on:click={() => fileRef.click()} />
         <br />
         <br />
@@ -67,14 +70,30 @@
 <br />
 <div class="d-flex flex-row justify-content-between">
     <div>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <span class={`small-link ${comp.type == "paragraph" ? "black" : ""}`} on:click={() => setType("paragraph")}>Paragraph</span>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <span class={`small-link ${comp.type == "quote" ? "black" : ""}`} on:click={() => setType("quote")}>Quote</span>
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <span class={`small-link ${comp.type == "image" ? "black" : ""}`} on:click={() => setType("image")}>Image</span>
     </div>
     <div>
-        <span class="small-link">&#x2191;</span>
-        <span class="small-link">&#x2193;</span>
-        <span class="small-link">&times;</span>
+        {#if ! interactions.isFirst }
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class="small-link" on:click={interactions.moveUp}>&#x2191;</span>
+        {/if}
+        {#if ! interactions.isLast }
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class="small-link" on:click={interactions.moveDown}>&#x2193;</span>
+        {/if}
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <span class="small-link" on:click={interactions.delete}>&times;</span>
     </div>
 </div>
 
@@ -119,9 +138,6 @@
         padding: 0;
         border-radius: 10px;
         width: 100%;
-    }
-    hr {
-        margin-bottom: 0;
     }
     input[type="file"] {
         display: none;
