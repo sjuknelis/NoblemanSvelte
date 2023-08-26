@@ -3,6 +3,7 @@
     import Component from "./Component.svelte";
     import { articleID, volumes, currentVolume } from "../stores";
     import type { Article, ArticleComponent, ComponentInteractions } from "../types";
+    import ArticleControlBar from "./ArticleControlBar.svelte";
 
     let article: Article;
 
@@ -31,6 +32,7 @@
     }
 
     const dispatch = createEventDispatcher();
+    const reloadArticles = () => dispatch("shouldReloadArticles");
 
     const addComp = (index: number) => {
         article.content.splice(index,0,{data: {text: ""}, type: "paragraph"});
@@ -68,12 +70,12 @@
 
 {#if article}
     <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={() => dispatch("shouldReloadArticles")}></span>
+    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={reloadArticles}></span>
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-grow-1">
             By: 
             <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={() => dispatch("shouldReloadArticles")}></span>
+            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={reloadArticles}></span>
         </div>
         <div>
             Volume:
@@ -84,6 +86,7 @@
             </select>
         </div>
     </div>
+    <ArticleControlBar bind:article={article} reloadArticles={reloadArticles} />
     {#each article.content as comp,index}
         <div class="d-flex">
             <div class="flex-grow-1 line"></div>

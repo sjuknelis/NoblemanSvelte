@@ -14,7 +14,7 @@
     currentVolume.subscribe(reloadArticles);
 
     const createBlank = async () => {
-        const response = await fetch(`/api/article`,{method: "POST"});
+        const response = await fetch(`/api/article?volume=${$currentVolume}`,{method: "POST"});
         articleID.set((await response.json()).id);
         reloadArticles();
     }

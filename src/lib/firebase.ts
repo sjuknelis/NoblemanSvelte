@@ -6,7 +6,7 @@ import { addDoc, collection, getFirestore, updateDoc, serverTimestamp, doc, getD
 import { getDownloadURL, getStorage, uploadBytes, ref } from "firebase/storage";
 import type { Article } from "./types";
 
-const firebaseConfig = {
+const firebaseConfig = null/*{
     apiKey: "AIzaSyA6psVQGugH5tf9ZNM6iT4zJQ7MMnU3KIQ",
     authDomain: "nobles-20183.firebaseapp.com",
     databaseURL: "https://nobles-20183-default-rtdb.firebaseio.com",
@@ -14,7 +14,7 @@ const firebaseConfig = {
     storageBucket: "nobles-20183.appspot.com",
     messagingSenderId: "401842201893",
     appId: "1:401842201893:web:7f09b789d4b312874826cc"
-};
+};*/
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

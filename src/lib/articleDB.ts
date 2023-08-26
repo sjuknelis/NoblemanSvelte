@@ -11,8 +11,12 @@ const defaultArticle: Article = {
     publishKeys: {}
 };
 
-export async function createArticle(article: Article): Promise<number> {
-    if ( ! article ) article = defaultArticle;
+export async function createArticle(article: Article | null,volume: string | undefined): Promise<number> {
+    if ( ! article ) {
+        article = defaultArticle;
+        if ( volume ) article.volume = volume;
+    }
+
     const db = await getDB();
     const query = await db.run(
         `insert into articles (title,author,volume,content,isPublished,publishKeys) values (?,?,?,?,false,"{}")`,
