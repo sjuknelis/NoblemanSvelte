@@ -25,6 +25,11 @@ export type PublishKeys = {
     statIndex?: number;
 }
 
+export type VolumeStatus = {
+    title: string;
+    isPublished: boolean;
+}
+
 export type ComponentInteractions = {
     isFirst: boolean;
     isLast: boolean;

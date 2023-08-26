@@ -1,17 +1,18 @@
-import { writable } from "svelte/store";
+import { Writable, writable } from "svelte/store";
+import type { VolumeStatus } from "./types";
 
-export const articleID = writable(null);
+export const articleID: Writable<number | null> = writable(null);
 
-export const volumes = writable([]);
+export const volumes: Writable<string[]> = writable([]);
 
-export const currentVolume = writable("113/1");
+export const currentVolume: Writable<string> = writable("113/1");
 
 (async () => {
-    const response = await fetch("/content/volumes.json");
-    const volumeData = await response.json();
-    volumes.set(volumeData);
+    const response = await fetch("/api/volume");
+    const volumeData: VolumeStatus[] = await response.json();
+    volumes.set(volumeData.map(status => status.title));
 
-    const defaultVolume = localStorage.getItem("volume") || volumeData[0];
+    const defaultVolume = localStorage.getItem("volume") || volumeData[0].title;
     currentVolume.set(defaultVolume);
     localStorage.setItem("volume",defaultVolume);
 })();

@@ -1,7 +1,5 @@
-import * as fs from "fs";
 import * as cheerio from "cheerio";
 import StreamZip from "node-stream-zip";
-import mime from "mime";
 import { randomUUID } from "crypto";
 import { extname } from "path";
 import { writeFile } from "fs/promises";

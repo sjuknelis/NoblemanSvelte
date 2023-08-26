@@ -1,14 +1,22 @@
 <script lang="ts">
     import { articleID, volumes, currentVolume } from "../stores";
-    import type { Article } from "../types";
+    import type { Article, VolumeStatus } from "../types";
 
-    let articles: Article[];
+    let articles: Article[],isVolumePublished: boolean;
+
+    const getVolumePublished = async (volume: string): Promise<boolean> => {
+        const response = await fetch("/api/volume");
+        const volumeData: VolumeStatus[] = await response.json();
+        return volumeData.filter(status => status.title == volume)[0].isPublished;
+    }
 
     export const reloadArticles = async () => {
         if ( ! $currentVolume ) return;
 
         const response = await fetch(`/api/articles_by_volume?volume=${$currentVolume}`);
         articles = await response.json();
+
+        isVolumePublished = await getVolumePublished($currentVolume);
     }
 
     currentVolume.subscribe(reloadArticles);
@@ -39,6 +47,11 @@
         articleID.set(newIDs[0]);
         reloadArticles();
     }
+
+    const setVolumePublished = async (publish: boolean) => {
+        await fetch(`/api/publish?type=volume&volume=${encodeURIComponent($currentVolume)}&publish=${publish ? 1 : 0}`,{method: "POST"});
+        isVolumePublished = publish;
+    }
 </script>
 
 {#if volumes}
@@ -59,6 +72,10 @@
     <br />
     <div class="d-flex flex-row justify-content-center">
         <button class="btn btn-success" on:click={() => fileRef.click()}>+ Create from ZIP</button>
+    </div>
+    <br />
+    <div class="d-flex flex-row justify-content-center">
+        <button class="btn btn-primary" on:click={() => setVolumePublished(! isVolumePublished)}>{ isVolumePublished ? "Unpublish" : "Publish" }</button>
     </div>
 {/if}
 <br />
