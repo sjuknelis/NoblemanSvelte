@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
+    import type { Article } from "../types";
 
-    export let articleID;
+    export let articleID: number;
 
-    let articles,volumes,currentVolume;
+    let articles: Article[],volumes: string[],currentVolume: string;
 
     onMount(async () => {
         const response = await fetch("/content/volumes.json");

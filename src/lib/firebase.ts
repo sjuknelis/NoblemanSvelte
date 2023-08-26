@@ -2,8 +2,9 @@ import { randomUUID } from "crypto";
 import { readFile } from "fs/promises";
 import { getType } from "mime";
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, getFirestore, updateDoc, serverTimestamp, doc, getDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { addDoc, collection, getFirestore, updateDoc, serverTimestamp, doc, getDoc, arrayUnion, setDoc, DocumentReference } from "firebase/firestore";
 import { getDownloadURL, getStorage, uploadBytes, ref } from "firebase/storage";
+import type { Article } from "./types";
 
 const firebaseConfig = {
     apiKey: "AIzaSyA6psVQGugH5tf9ZNM6iT4zJQ7MMnU3KIQ",
@@ -20,7 +21,6 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 export async function setEditionPublished(volume,isPublished) {
-    console.log(volume,isPublished);
     await updateDoc(
         doc(db,`volumes/${volume.split("/")[0]}/editions/${volume.split("/")[1]}`),
         {
@@ -29,10 +29,9 @@ export async function setEditionPublished(volume,isPublished) {
     );
 }
 
-export async function updateDocs(article) { 
-    if ( ! article.publishKeys.id ) {
-        await createDocs(article);
-        return;
+export async function updateDocs(article: Article): Promise<boolean> { 
+    if ( ! article.publishKeys.id || ! article.publishKeys.statIndex ) {
+        return await createDocs(article);
     }
 
     const articleDoc = doc(db,`volumes/${getVolume(article)}/articles/${article.publishKeys.id}`);
@@ -43,14 +42,17 @@ export async function updateDocs(article) {
 
     const statDoc = doc(db,`volumes/${getVolume(article)}/editions/${getEdition(article)}`);
     const statDocContent = (await getDoc(statDoc)).data();
+    if ( ! statDocContent ) return false;
     statDocContent.articles[article.publishKeys.statIndex] = articleToStatObj(article,articleDoc);
     await setDoc(
         statDoc,
         statDocContent
-    )
+    );
+    
+    return true;
 }
 
-async function createDocs(article) {
+async function createDocs(article: Article): Promise<boolean> {
     const articleDoc = await addDoc(
         collection(db,`volumes/${getVolume(article)}/articles`),
         await articleToDoc(article)
@@ -58,20 +60,24 @@ async function createDocs(article) {
     article.publishKeys.id = articleDoc.id;
 
     const statDoc = doc(db,`volumes/${getVolume(article)}/editions/${getEdition(article)}`);
-    article.publishKeys.statIndex = (await getDoc(statDoc)).data().articles.length;
+    const statDocContent = (await getDoc(statDoc)).data();
+    if ( ! statDocContent ) return false;
+    article.publishKeys.statIndex = statDocContent.articles.length;
     await updateDoc(
         statDoc,
         {
             articles: arrayUnion(articleToStatObj(article,articleDoc))
         }
     );
+
+    return true;
 }
 
-async function articleToDoc(article) {
+async function articleToDoc(article: Article) {
     for ( const comp of article.content ) {
         if ( comp.type == "image" && ! comp.data.url ) {
-            console.log(comp);
-            comp.data.url = comp.data.src = await uploadImage(comp.data.src);
+            if ( ! comp.data.src ) continue;
+            comp.data.url = await uploadImage(comp.data.src);
         }
     }
 
@@ -88,7 +94,7 @@ async function articleToDoc(article) {
     };
 }
 
-function articleToStatObj(article,articleDoc) {
+function articleToStatObj(article: Article,articleDoc: DocumentReference) {
     return {
         title: article.title,
         author: {
@@ -100,7 +106,7 @@ function articleToStatObj(article,articleDoc) {
     };
 }
 
-async function uploadImage(imageSrc) {
+async function uploadImage(imageSrc: string) {
     const imageFile = await readFile(imageSrc);
     const imageRef = ref(storage,`nobleman/${randomUUID()}`);
     await uploadBytes(
@@ -113,7 +119,7 @@ async function uploadImage(imageSrc) {
     return await getDownloadURL(imageRef);
 }
 
-const getVolume = article => article.volume.split("/")[0];
-const getEdition = article => article.volume.split("/")[1];
+const getVolume = (article: Article) => article.volume.split("/")[0];
+const getEdition = (article: Article) => article.volume.split("/")[1];
 
-const getPreviewImageURL = article => article.content.filter(comp => comp.type == "image")[0].data.url
+const getPreviewImageURL = (article: Article) => article.content.filter(comp => comp.type == "image")[0].data.url;

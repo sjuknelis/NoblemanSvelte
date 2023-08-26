@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Component from "./Component.svelte";
+    import type { Article } from "../types";
 
-    export let articleID;
+    export let articleID: number;
 
-    let article;
+    let article: Article;
 
     $: articleID, (async () => {
         const response = await fetch(`/api/article?id=${articleID}`);
@@ -25,7 +26,7 @@
 
     const dispatch = createEventDispatcher();
 
-    const addComp = index => {
+    const addComp = (index: number) => {
         article.content.splice(index,0,{data: {text: ""}, type: "paragraph"});
         article = article;
     };

@@ -1,7 +1,9 @@
-<script>
-    export let comp;
+<script lang="ts">
+    import type { ArticleComponent } from "../types";
 
-    const setType = newType => {
+    export let comp: ArticleComponent;
+
+    const setType = (newType: string) => {
         if ( comp.type == newType ) return;
 
         if ( comp.type != "image" && newType != "image" ) {
@@ -11,6 +13,7 @@
 
         comp.data.text = "";
         comp.data.src = "/placeholder.png";
+        comp.data.url = "";
         comp.data.credit = "";
         comp.data.caption = "";
         comp.type = newType;
@@ -30,6 +33,7 @@
             body: formData
         });
         comp.data.src = (await response.json()).src;
+        comp.data.url = "";
     }
 </script>
 

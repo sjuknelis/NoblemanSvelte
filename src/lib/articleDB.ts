@@ -1,13 +1,16 @@
 import { AsyncDatabase } from "promised-sqlite3";
 
-const defaultArticle = {
+const defaultArticle: Article = {
+    id: -1,
     title: "",
     author: "",
     volume: "113/1",
-    content: []
+    content: [],
+    isPublished: false,
+    publishKeys: {}
 };
 
-export async function createArticle(article) {
+export async function createArticle(article: Article): Promise<number> {
     if ( ! article ) article = defaultArticle;
     const db = await getDB();
     const query = await db.run(
@@ -20,7 +23,7 @@ export async function createArticle(article) {
     return query.lastID;
 }
 
-export async function readArticle(id) {
+export async function readArticle(id: Number): Promise<Article> {
     const db = await getDB();
     const row = await db.get(
         `select id,title,author,volume,content,isPublished,publishKeys from articles where id=?`,
@@ -31,7 +34,7 @@ export async function readArticle(id) {
     return row;
 }
 
-export async function updateArticle(article) {
+export async function updateArticle(article: Article) {
     const db = await getDB();
     await db.run(
         `update articles set title=?,author=?,volume=?,content=?,isPublished=?,publishKeys=? where id=?`,
@@ -45,7 +48,7 @@ export async function updateArticle(article) {
     );
 }
 
-export async function deleteArticle(id) {
+export async function deleteArticle(id: number) {
     const db = await getDB();
     await db.run(
         `delete from articles where id=?`,
