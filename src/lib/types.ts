@@ -21,8 +21,9 @@ export type ArticleComponent = {
 }
 
 export type PublishKeys = {
-    id?: string;
-    statIndex?: number;
+    fbID?: string;
+    fbStatIndex?: number;
+    wpID?: number;
 }
 
 export type VolumeStatus = {

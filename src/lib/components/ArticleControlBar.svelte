@@ -2,19 +2,19 @@
     import { articleID } from "../stores";
     import type { Article } from "../types";
 
-    export let article: Article,reloadArticles: () => void;
+    export let article: Article,reloadArticle: () => void,reloadArticleList: () => void;
 
     const deleteArticle = async () => {
         if ( ! confirm("Are you sure you want to delete this article?") ) return;
 
         await fetch(`/api/article?id=${article.id}`,{method: "DELETE"});
         articleID.set(null);
-        reloadArticles();
+        reloadArticleList();
     }
 
     const setArticlePublished = async (publish: boolean) => {
-        await fetch(`/api/publish?type=article&id=${article.id}&publish=${publish ? "1" : "0"}`);
-        article.isPublished = publish;
+        await fetch(`/api/publish?type=article&id=${article.id}&publish=${publish ? "1" : "0"}`,{method: "POST"});
+        reloadArticle();
     }
 </script>
 

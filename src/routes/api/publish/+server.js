@@ -3,6 +3,7 @@ import { readArticle } from "$lib/articleDB";
 //import { setEditionPublished, updateDocs } from "$lib/firebase";
 import { updateArticle } from "$lib/articleDB";
 import { updateVolume } from "$lib/volumeDB";
+import { updatePost, setVolumePublished } from "$lib/wordpress";
 
 export async function POST({ url }) {
     const requestType = url.searchParams.get("type");
@@ -12,9 +13,12 @@ export async function POST({ url }) {
         const article = await readArticle(url.searchParams.get("id"));
         article.isPublished = toPublish;
         //await updateDocs(article);
+        await updatePost(article);
+        console.log(article.publishKeys)
         await updateArticle(article);
     } else if ( requestType == "volume" ) {
         //await setEditionPublished(url.searchParams.get("volume"),toPublish);
+        await setVolumePublished(url.searchParams.get("volume"),toPublish);
         await updateVolume({
             title: url.searchParams.get("volume"),
             isPublished: toPublish

@@ -7,7 +7,7 @@
 
     let article: Article;
 
-    articleID.subscribe(async (id: number | null) => {
+    const fetchArticle = async (id: number | null) => {
         if ( id === null ) {
             article = null;
             return;
@@ -15,7 +15,9 @@
 
         const response = await fetch(`/api/article?id=${id}`);
         article = await response.json();
-    });
+    }
+
+    articleID.subscribe(fetchArticle);
 
     const updateArticle = async () => {
         await fetch(`/api/article?id=${article.id}`,{
@@ -32,7 +34,7 @@
     }
 
     const dispatch = createEventDispatcher();
-    const reloadArticles = () => dispatch("shouldReloadArticles");
+    const reloadArticleList = () => dispatch("shouldReloadArticleList");
 
     const addComp = (index: number) => {
         article.content.splice(index,0,{data: {text: ""}, type: "paragraph"});
@@ -70,12 +72,12 @@
 
 {#if article}
     <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={reloadArticles}></span>
+    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={reloadArticleList}></span>
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-grow-1">
             By: 
             <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={reloadArticles}></span>
+            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={reloadArticleList}></span>
         </div>
         <div>
             Volume:
@@ -86,7 +88,7 @@
             </select>
         </div>
     </div>
-    <ArticleControlBar bind:article={article} reloadArticles={reloadArticles} />
+    <ArticleControlBar bind:article={article} reloadArticle={() => fetchArticle(article.id)} reloadArticleList={reloadArticleList} />
     {#each article.content as comp,index}
         <div class="d-flex">
             <div class="flex-grow-1 line"></div>

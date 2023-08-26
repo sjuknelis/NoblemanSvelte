@@ -20,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-export async function setEditionPublished(volume,isPublished) {
+export async function setEditionPublished(volume: string,isPublished: boolean) {
     await updateDoc(
         doc(db,`volumes/${volume.split("/")[0]}/editions/${volume.split("/")[1]}`),
         {

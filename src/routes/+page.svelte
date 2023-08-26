@@ -10,6 +10,6 @@
         <ArticleList bind:this={articleList} />
     </div>
     <div class="col-9">
-        <Article on:shouldReloadArticles={articleList.reloadArticles} />
+        <Article on:shouldReloadArticleList={articleList.reloadArticles} />
     </div>
 </div>
