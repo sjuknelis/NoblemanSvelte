@@ -1,4 +1,7 @@
+import { join } from "path";
+import { cwd } from "process";
 import { getDB } from "./articleDB";
+import { getFirstImage } from "./getFirstImage";
 import { Article, VolumeStatus } from "./types";
 
 const LOCAL_URL = "http://localhost:5173";
@@ -38,10 +41,12 @@ export async function updatePost(article: Article,forcePublishValue: boolean | u
         }
     }
 
-    const form = new FormData()
+    const form = new FormData();
     form.append("title",article.title);
     form.append("content",articleToHTML(article));
     form.append("status",publish ? "publish" : "draft");
+    const firstImage = getFirstImage(article);
+    if ( firstImage && firstImage.data.src ) form.append("feat_path",join(cwd(),firstImage.data.src));
     if ( article.publishKeys.wpID !== undefined ) form.append("id",article.publishKeys.wpID.toString());
 
     const response = await fetch(
