@@ -2,16 +2,14 @@
     import Article from "$lib/components/Article.svelte";
     import ArticleList from "$lib/components/ArticleList.svelte";
 
-    let articleList,articleID;
+    let articleList;
 </script>
 
 <div class="row">
     <div class="col-3">
-        <ArticleList bind:this={articleList} bind:articleID={articleID} />
+        <ArticleList bind:this={articleList} />
     </div>
     <div class="col-9">
-        {#if articleID}
-            <Article articleID={articleID} on:shouldReloadArticles={articleList.reloadArticles} />
-        {/if}
+        <Article on:shouldReloadArticles={articleList.reloadArticles} />
     </div>
 </div>

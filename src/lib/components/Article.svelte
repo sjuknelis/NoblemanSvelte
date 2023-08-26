@@ -1,27 +1,33 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import Component from "./Component.svelte";
+    import { articleID, volumes, currentVolume } from "../stores";
     import type { Article } from "../types";
-
-    export let articleID: number;
 
     let article: Article;
 
-    $: articleID, (async () => {
-        const response = await fetch(`/api/article?id=${articleID}`);
+    articleID.subscribe(async (id: number | null) => {
+        if ( id === null ) {
+            article = null;
+            return;
+        }
+
+        const response = await fetch(`/api/article?id=${id}`);
         article = await response.json();
-    })();
+    });
+
+    const updateArticle = async () => {
+        await fetch(`/api/article?id=${article.id}`,{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(article)
+        });
+    }
 
     $: {
-        if ( article ) {
-            fetch(`/api/article?id=${articleID}`,{
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(article)
-            });
-        }
+        if ( article ) updateArticle();
     }
 
     const dispatch = createEventDispatcher();
@@ -29,20 +35,31 @@
     const addComp = (index: number) => {
         article.content.splice(index,0,{data: {text: ""}, type: "paragraph"});
         article = article;
-    };
+    }
+
+    const setArticleVolume = async event => {
+        await updateArticle();
+        const volume = event.target.value;
+        article.volume = volume;
+        currentVolume.set(volume);
+    }
 </script>
 
 {#if article}
+    <!-- svelte-ignore a11y-interactive-supports-focus -->
     <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={() => dispatch("shouldReloadArticles")}></span>
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-grow-1">
             By: 
+            <!-- svelte-ignore a11y-interactive-supports-focus -->
             <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={() => dispatch("shouldReloadArticles")}></span>
         </div>
         <div>
             Volume:
-            <select class="form-control">
-                <option>113/1</option>
+            <select class="form-control" on:change={setArticleVolume} bind:value={article.volume}>
+                {#each $volumes as volume}
+                    <option>{ volume }</option>
+                {/each}
             </select>
         </div>
     </div>

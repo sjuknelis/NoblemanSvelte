@@ -1,4 +1,5 @@
 import { AsyncDatabase } from "promised-sqlite3";
+import type { Article } from "./types";
 
 const defaultArticle: Article = {
     id: -1,
@@ -25,7 +26,7 @@ export async function createArticle(article: Article): Promise<number> {
 
 export async function readArticle(id: Number): Promise<Article> {
     const db = await getDB();
-    const row = await db.get(
+    const row: any = await db.get(
         `select id,title,author,volume,content,isPublished,publishKeys from articles where id=?`,
         id
     );
@@ -57,7 +58,7 @@ export async function deleteArticle(id: number) {
 }
 
 export const getDB = (() => {
-    let db;
+    let db: AsyncDatabase;
 
     return async () => {
         if ( ! db ) db = await AsyncDatabase.open("db.sqlite");
