@@ -65,14 +65,16 @@
             </select>
         </div>
     </div>
-    <br />
-    <div class="d-flex flex-row justify-content-center">
-        <button class="btn btn-success" on:click={createBlank}>+ Create blank</button>
-    </div>
-    <br />
-    <div class="d-flex flex-row justify-content-center">
-        <button class="btn btn-success" on:click={() => fileRef.click()}>+ Create from ZIP</button>
-    </div>
+    {#if ! isVolumePublished}
+        <br />
+        <div class="d-flex flex-row justify-content-center">
+            <button class="btn btn-success" on:click={createBlank}>+ Create blank</button>
+        </div>
+        <br />
+        <div class="d-flex flex-row justify-content-center">
+            <button class="btn btn-success" on:click={() => fileRef.click()}>+ Create from ZIP</button>
+        </div>
+    {/if}
     <br />
     <div class="d-flex flex-row justify-content-center">
         <button class="btn btn-primary" on:click={() => setVolumePublished(! isVolumePublished)}>{ isVolumePublished ? "Unpublish" : "Publish" }</button>

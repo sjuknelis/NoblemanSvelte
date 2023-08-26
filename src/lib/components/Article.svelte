@@ -71,17 +71,25 @@
 </script>
 
 {#if article}
-    <!-- svelte-ignore a11y-interactive-supports-focus -->
-    <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={reloadArticleList}></span>
+    {#if ! article.isPublished}
+        <!-- svelte-ignore a11y-interactive-supports-focus -->
+        <span class="text-input h3" role="textbox" contenteditable bind:innerText={article.title} on:keyup={reloadArticleList}></span>
+    {:else}
+        <span class="h3">{article.title}</span>
+    {/if}
     <div class="d-flex flex-row justify-content-between">
         <div class="flex-grow-1">
             By: 
-            <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={reloadArticleList}></span>
+            {#if ! article.isPublished}
+                <!-- svelte-ignore a11y-interactive-supports-focus -->
+                <span class="text-input author-input" role="textbox" contenteditable bind:innerText={article.author} on:keyup={reloadArticleList}></span>
+            {:else}
+                <span>{article.author}</span>
+            {/if}
         </div>
         <div>
             Volume:
-            <select class="form-control" on:change={setArticleVolume} bind:value={article.volume}>
+            <select class="form-control" on:change={setArticleVolume} bind:value={article.volume} disabled={article.isPublished}>
                 {#each $volumes as volume}
                     <option>{ volume }</option>
                 {/each}
@@ -89,19 +97,27 @@
         </div>
     </div>
     <ArticleControlBar bind:article={article} reloadArticle={() => fetchArticle(article.id)} reloadArticleList={reloadArticleList} />
+    <hr />
     {#each article.content as comp,index}
-        <div class="d-flex">
-            <div class="flex-grow-1 line"></div>
-            <button class="add-button" on:click={() => addComp(index)}>+</button>
-            <div class="flex-grow-1 line"></div>
-        </div>
-        <Component bind:comp={comp} interactions={getCompInteractions(comp,index)} />
+        {#if ! article.isPublished}
+            <div class="d-flex">
+                <div class="flex-grow-1 line"></div>
+                <button class="add-button" on:click={() => addComp(index)}>+</button>
+                <div class="flex-grow-1 line"></div>
+            </div>
+        {/if}
+        <Component bind:comp={comp} interactions={getCompInteractions(comp,index)} disabled={article.isPublished} />
+        {#if article.isPublished}
+            <br />
+        {/if}
     {/each}
+    {#if ! article.isPublished}
     <div class="d-flex">
         <div class="flex-grow-1 line"></div>
         <button class="add-button" on:click={() => addComp(article.content.length)}>+</button>
         <div class="flex-grow-1 line"></div>
     </div>
+    {/if}
 {/if}
 
 <style>

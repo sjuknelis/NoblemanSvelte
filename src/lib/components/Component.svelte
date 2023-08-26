@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { ArticleComponent, ComponentInteractions } from "../types";
 
-    export let comp: ArticleComponent,interactions: ComponentInteractions;
+    export let comp: ArticleComponent,interactions: ComponentInteractions,disabled: boolean;
 
     const setType = (newType: string) => {
         if ( comp.type == newType ) return;
@@ -38,64 +38,74 @@
 </script>
 
 {#if comp.type != "image"}
-    <span class={`text-input ${comp.type == "quote" ? "quote" : ""}`} role="textbox" contenteditable bind:innerText={comp.data.text}></span>
+    {#if ! disabled}
+        <span class={`text-input ${comp.type == "quote" ? "quote" : ""}`} role="textbox" contenteditable bind:innerText={comp.data.text}></span>
+    {:else}
+        <span class={`text-input ${comp.type == "quote" ? "quote" : ""}`}>{comp.data.text}</span>
+    {/if}
     <br />
 {:else}
     <div class="container-60">
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
         <!-- svelte-ignore a11y-missing-attribute -->
-        <img src={comp.data.src} on:click={() => fileRef.click()} />
+        <img src={comp.data.src} on:click={() => ! disabled && fileRef.click()} />
         <br />
         <br />
-        <div class="row">
-            <div class="col-2">
-                Credit:
+        {#if ! disabled}
+            <div class="row">
+                <div class="col-2">
+                    Credit:
+                </div>
+                <div class="col-10">
+                    <span class="text-input" role="textbox" contenteditable bind:innerText={comp.data.credit}></span>
+                </div>
             </div>
-            <div class="col-10">
-                <span class="text-input" role="textbox" contenteditable bind:innerText={comp.data.credit}></span>
+            <br />
+            <div class="row">
+                <div class="col-2">
+                    Caption:
+                </div>
+                <div class="col-10">
+                    <span class="text-input" role="textbox" contenteditable bind:innerText={comp.data.caption}></span>
+                </div>
             </div>
+        {:else}
+            <i>{comp.data.caption} / Credit: {comp.data.credit}</i>
+        {/if}
+    </div>
+{/if}
+{#if ! disabled}
+    <br />
+    <div class="d-flex flex-row justify-content-between">
+        <div>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class={`small-link ${comp.type == "paragraph" ? "black" : ""}`} on:click={() => setType("paragraph")}>Paragraph</span>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class={`small-link ${comp.type == "quote" ? "black" : ""}`} on:click={() => setType("quote")}>Quote</span>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class={`small-link ${comp.type == "image" ? "black" : ""}`} on:click={() => setType("image")}>Image</span>
         </div>
-        <br />
-        <div class="row">
-            <div class="col-2">
-                Caption:
-            </div>
-            <div class="col-10">
-                <span class="text-input" role="textbox" contenteditable bind:innerText={comp.data.caption}></span>
-            </div>
+        <div>
+            {#if ! interactions.isFirst }
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <span class="small-link" on:click={interactions.moveUp}>&#x2191;</span>
+            {/if}
+            {#if ! interactions.isLast }
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-static-element-interactions -->
+                <span class="small-link" on:click={interactions.moveDown}>&#x2193;</span>
+            {/if}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <span class="small-link" on:click={interactions.delete}>&times;</span>
         </div>
     </div>
 {/if}
-<br />
-<div class="d-flex flex-row justify-content-between">
-    <div>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class={`small-link ${comp.type == "paragraph" ? "black" : ""}`} on:click={() => setType("paragraph")}>Paragraph</span>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class={`small-link ${comp.type == "quote" ? "black" : ""}`} on:click={() => setType("quote")}>Quote</span>
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class={`small-link ${comp.type == "image" ? "black" : ""}`} on:click={() => setType("image")}>Image</span>
-    </div>
-    <div>
-        {#if ! interactions.isFirst }
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="small-link" on:click={interactions.moveUp}>&#x2191;</span>
-        {/if}
-        {#if ! interactions.isLast }
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <span class="small-link" on:click={interactions.moveDown}>&#x2193;</span>
-        {/if}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class="small-link" on:click={interactions.delete}>&times;</span>
-    </div>
-</div>
 
 <input bind:this={fileRef} type="file" on:change={uploadImage} />
 
