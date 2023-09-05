@@ -15,6 +15,12 @@
 				padding: 2em;
 			}
 		</style>
+		<script>
+			(async () => {
+				if ( ! (await (await fetch(`/api/test_login${location.search}`)).json()).ok ) document.body.parentElement.removeChild(document.body);
+			})();
+		</script>
+		<title>Nobleman Publisher</title>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

@@ -1,3 +1,5 @@
 node_modules
 content
 db.sqlite
+wp_batch/images
+wp_batch/articles.json
